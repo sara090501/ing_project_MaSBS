@@ -16,16 +16,25 @@ import csv
 parser = argparse.ArgumentParser()
 parser.add_argument("cells_positions_rotations_number", metavar="cells_positions_rotations_number",
                     type=int, help="cells positions rotations number")
+parser.add_argument("cell_type", metavar="cell_type", type=str, help="cell type")
+parser.add_argument("small_cell_size", metavar="small_cell_size", type=float, help="small cell size")
+parser.add_argument("big_cell_size", metavar="big_cell_size", type=float, help="big cell size")
 parser.add_argument("fluid_speed", metavar="fluid_speed", type=float, help="fluid speed")
 parser.add_argument("sim_no", metavar="sim_no", type=int, help="simulation identifier")
 args = parser.parse_args()
 
 print("\nCells positions and rotations number: " + str(args.cells_positions_rotations_number) + "\n" +
+      "Cell type: " + str(args.cell_type) + "\n" +
+      "Small cell size: " + str(args.small_cell_size) + "\n" +
+      "Big cell size: " + str(args.big_cell_size) + "\n" +
       "Fluid speed: " + str(args.fluid_speed) + "\n" +
       "Simulation identifier: " + str(args.sim_no) + "\n")
 
 directory_position_rotations = "input/cells_positions_rotations_" + str(args.cells_positions_rotations_number)
 fluid_speed = args.fluid_speed
+cell_type = args.cell_type
+small_cell_size = args.small_cell_size
+big_cell_size = args.big_cell_size
 
 directory = "output/sim" + str(args.sim_no)
 os.makedirs(directory)
@@ -53,51 +62,38 @@ print("boxX: ", boxX)
 print("boxY: ", boxY)
 print("boxZ: ", boxZ)
 
+margin = 10  # mm od stien
+
+
 # Kontrola zapisu origin-u bunky do csv
 def lineForOrigin(x, y):
     return 40 * x + 40 * math.sqrt(3) * y - 6400 * math.sqrt(3) - 16800
 
-#generovanie rotacie pre bunku
-def random_rotation_matrix():
-    """Generuje náhodnú rotačnú maticu pomocou Eulerových uhlov."""
-    angles = np.random.uniform(0, 2*np.pi, 3)
-    rx = np.array([[1, 0, 0],
-                   [0, np.cos(angles[0]), -np.sin(angles[0])],
-                   [0, np.sin(angles[0]), np.cos(angles[0])]])
-    ry = np.array([[np.cos(angles[1]), 0, np.sin(angles[1])],
-                   [0, 1, 0],
-                   [-np.sin(angles[1]), 0, np.cos(angles[1])]])
-    rz = np.array([[np.cos(angles[2]), -np.sin(angles[2]), 0],
-                   [np.sin(angles[2]), np.cos(angles[2]), 0],
-                   [0, 0, 1]])
-    return rz @ ry @ rx  # Kombinovaná rotačná matica
-
-# Rozmery buniek
-small_cell_size = 5  # mm
-big_cell_size = 10  # mm
-margin = 10  # mm od stien
 
 # creating the template for RBCs
-small_cell_type = oif.OifCellType(
-                    nodes_file="input/Biclustersolid284nodes.dat",
-                    triangles_file="input/Biclustersolid284triangles.dat",
-                    check_orientation=False, system=system, ks=1.0, kb=0.0, kal=0.0,
-                    kag=0.0, kv=0.0, resize=[2.5, 2.5, 2.5], normal=False)
-#sem pridat rotate vektor troch cisel, je to v radianoch
-big_cell_type = oif.OifCellType(
-                    nodes_file="input/Biclustersolid284nodes.dat",
-                    triangles_file="input/Biclustersolid284triangles.dat",
-                    check_orientation=False, system=system, ks=1.0, kb=0.0, kal=0.0,
-                    kag=0.0, kv=0.0, resize=[5.0, 5.0, 5.0], normal=False)
+if cell_type == "bi":
+    small_cell_type = oif.OifCellType(
+                        nodes_file="input/Biclustersolid284nodes.dat",
+                        triangles_file="input/Biclustersolid284triangles.dat",
+                        check_orientation=False, system=system, ks=1.0, kb=0.0, kal=0.0,
+                        kag=0.0, kv=0.0, resize=[small_cell_size, small_cell_size, small_cell_size], normal=False)
+    big_cell_type = oif.OifCellType(
+                        nodes_file="input/Biclustersolid284nodes.dat",
+                        triangles_file="input/Biclustersolid284triangles.dat",
+                        check_orientation=False, system=system, ks=1.0, kb=0.0, kal=0.0,
+                        kag=0.0, kv=0.0, resize=[big_cell_size, big_cell_size, big_cell_size], normal=False)
+else:
+    small_cell_type = oif.OifCellType(nodes_file="solidball126nodes.dat", triangles_file="solidball126triangles.dat",
+                                      check_orientation=False, system=system, ks=1.0, kb=0.0, kal=0.0,
+                                      kag=0.0, kv=0.0, resize=[1.25, 1.25, 1.25], normal=False)
+    big_cell_type = oif.OifCellType(nodes_file="solidball126nodes.dat", triangles_file="solidball126triangles.dat",
+                                    check_orientation=False, system=system, ks=1.0, kb=0.0, kal=0.0,
+                                    kag=0.0, kv=0.0, resize=[2.5, 2.5, 2.5], normal=False)
 # ks = koeficient natiahnutia
 # kb = koeficient ohybnosti
 # kal = koeficient local area
 # kag = koeficient global area
 # kv = koeficient objemu
-
-# creating the RBCs
-# cell = oif.OifCell(cell_type=small_cell_type, particle_type=0, origin=[5.0, 8.0, 6.0])
-# cell1 = oif.OifCell(cell_type=big_cell_type, particle_type=1, origin=[5.0, 12.0, 13.0]
 cells = []
 
 # Počet malých a veľkých buniek
