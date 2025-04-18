@@ -41,8 +41,8 @@ directory = "input/cells_positions_rotations_" + str(args.csv_no)
 os.makedirs(directory)
 
 # Veľkosti malých a veľkých buniek
-small_cell_size = args.num_small_cells
-big_cell_size = args.num_small_cells
+small_cell_size = args.small_cell_size
+big_cell_size = args.big_cell_size
 
 # Počet malých a veľkých buniek
 num_small_cells = args.num_small_cells
@@ -126,7 +126,7 @@ if generate_positions == "Y" or generate_positions == "y":
                 z_random = random.uniform(
                     side_wall_width + margin_top_and_bottom + small_cell_size,
                     side_wall_width + canal_width_z - margin_top_and_bottom - small_cell_size)
-                if z_random == center_of_canal_z:
+                if z_random != center_of_canal_z:
                     break
 
             if inside_rectangle(x_random + new_small_cell_size + margin, y_random + new_small_cell_size + margin) and \
@@ -147,7 +147,7 @@ if generate_positions == "Y" or generate_positions == "y":
                 z_random = random.uniform(
                     side_wall_width + margin_top_and_bottom + small_cell_size,
                     side_wall_width + canal_width_z - margin_top_and_bottom - small_cell_size)
-                if z_random == center_of_canal_z:
+                if z_random != center_of_canal_z:
                     break
 
             if inside_rectangle(x_random + new_big_cell_size + margin, y_random + new_big_cell_size + margin) and \
