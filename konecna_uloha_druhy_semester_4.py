@@ -83,10 +83,12 @@ if cell_type == "bi":
                         check_orientation=False, system=system, ks=1.0, kb=0.0, kal=0.0,
                         kag=0.0, kv=0.0, resize=[big_cell_size, big_cell_size, big_cell_size], normal=False)
 else:
-    small_cell_type = oif.OifCellType(nodes_file="solidball126nodes.dat", triangles_file="solidball126triangles.dat",
+    small_cell_type = oif.OifCellType(nodes_file="input/solidball126nodes.dat",
+                                      triangles_file="input/solidball126triangles.dat",
                                       check_orientation=False, system=system, ks=1.0, kb=0.0, kal=0.0,
                                       kag=0.0, kv=0.0, resize=[1.25, 1.25, 1.25], normal=False)
-    big_cell_type = oif.OifCellType(nodes_file="solidball126nodes.dat", triangles_file="solidball126triangles.dat",
+    big_cell_type = oif.OifCellType(nodes_file="input/solidball126nodes.dat",
+                                    triangles_file="input/solidball126triangles.dat",
                                     check_orientation=False, system=system, ks=1.0, kb=0.0, kal=0.0,
                                     kag=0.0, kv=0.0, resize=[2.5, 2.5, 2.5], normal=False)
 # ks = koeficient natiahnutia
