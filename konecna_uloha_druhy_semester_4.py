@@ -319,8 +319,8 @@ for cycle in range(1, maxCycle):
     recorded_cells = set()
 
     # Export pozícií buniek po každom cykle
-    for i, cell in enumerate(cells):
-        cell.output_vtk_pos_folded(file_name=f"{directory}/cell_{i}_{cycle}.vtk")
+    # for i, cell in enumerate(cells):
+    #     cell.output_vtk_pos_folded(file_name=f"{directory}/cell_{i}_{cycle}.vtk")
 
     # Kontrola buniek, ktoré prešli za hranicu priamky
     for j in range(0, len(cells)):
